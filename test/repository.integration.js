@@ -125,7 +125,7 @@ describe('Repository', function() {
   describe('.commit()', function() {
 
     it('should commit the working tree', function(done) {
-      repo1.commit('initial commit', function(err) {
+      repo1.commit('initial commit', [], function(err) {
         should.not.exist(err);
         repo1.status(function(err, status) {
           should.not.exist(err);
@@ -316,7 +316,7 @@ describe('Repository', function() {
 
     it('should merge a branch into the current branch', function(done) {
       repo1.add(['file1.txt'], function(err) {
-        repo1.commit('add file', function(err) {
+        repo1.commit('add file', [], function(err) {
           repo1.checkout('master', function(err) {
             repo1.merge('test', function(err) {
               should.not.exist(err);
@@ -539,7 +539,7 @@ describe('Repository', function() {
       repo1.checkout('test', function(err) {
         fs.writeFile('cherry.txt', 'cherrypickme', function(err) {
           repo1.add(['cherry.txt'], function(err) {
-            repo1.commit('cherrypickme', function(err) {
+            repo1.commit('cherrypickme', [], function(err) {
               repo1.log(function(err, log) {
                 repo1.checkout('master', function(err) {
                   repo1.cherryPick(log[0].commit, function(err) {
@@ -600,6 +600,48 @@ describe('Repository', function() {
       });
     });
 
+  });
+
+  describe('.commit(-a)', function() {
+    it('should commit modified bu unstaged files', function(done) {
+      fs.writeFile(repo1.path + '/commitflagfile.txt', 'foo', function(err) {
+        should.not.exist(err);
+        repo1.add(['commitflagfile.txt'], function(err) {
+          should.not.exist(err);
+          repo1.commit('initial commit', [], function(err) {
+            should.not.exist(err);
+            fs.writeFile(repo1.path + '/commitflagfile.txt', 'bar', function(err) {
+              repo1.commit('second commit', ['-a'], function(err) {
+                should.not.exist(err);
+                repo1.status(function(err, status) {
+                  should.not.exist(err);
+                  status.staged.should.have.lengthOf(0);
+                  status.unstaged.should.have.lengthOf(0);
+                  status.untracked.should.have.lengthOf(0);
+                  done();
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+
+  });
+
+  describe('.commitSync(-a)', function() {
+    it('should commit modified bu unstaged files', function(done) {
+      fs.writeFileSync(repo1.path + '/commitflagfile.txt', 'foo');
+      repo1.addSync(['commitflagfile.txt']);
+      repo1.commitSync('initial commit', []);
+      fs.writeFileSync(repo1.path + '/commitflagfile.txt', 'bar');
+      repo1.commitSync('second commit', ['-a']);
+      var status =repo1.statusSync();
+      status.staged.should.have.lengthOf(0);
+      status.unstaged.should.have.lengthOf(0);
+      status.untracked.should.have.lengthOf(0);
+      done();
+    });
   });
 
 });
