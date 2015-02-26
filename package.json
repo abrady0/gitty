@@ -4,8 +4,7 @@
   "description": "A Node.js wrapper for the Git CLI",
   "main": "index",
   "dependencies": {
-    "execSync": "^1.0.2",
-    "pty.js": "chjj/pty.js#18238d37e2915b3ac97e4ae0d5cb3e33f76ac758"
+    "execSync": "^1.0.2"
   },
   "devDependencies": {
     "mocha": "^1.21.4",
