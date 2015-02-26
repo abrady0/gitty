@@ -79,7 +79,7 @@ describe('Repository', function() {
       fs.writeFile(repo1.path + '/file.txt', 'i am a file', function(err) {
         repo1.status(function(err, status) {
           should.not.exists(err);
-          (status.untracked.indexOf('file.txt') === 0).should.be.true;
+          (status.untracked[0].file === 'file.txt').should.be.true;
           done();
         });
       });
@@ -91,7 +91,7 @@ describe('Repository', function() {
 
     it('should show a new file in status', function(done) {
       fs.writeFileSync(repo2.path + '/file.txt', 'i am a file');
-      (repo2.statusSync().untracked.indexOf('file.txt') === 0).should.be.true;
+      (repo2.statusSync().untracked[0].file === 'file.txt').should.be.true;
       done();
     });
 
