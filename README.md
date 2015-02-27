@@ -17,10 +17,6 @@ syntax, executes common commands, and parses the output into operable objects.
 $ npm install gitty
 ```
 
-**Note**: If you encounter an error during installation on Mac OSX, make sure
-you have the XCode Command Line Tools installed. Gitty depends on **pty.js**
-for authenticated operations - which requires GCC compiler.
-
 1. Go to the App store and download the latest version of Xcode for free.
 2. Install Xcode (the app store actually downloads the "installer" for Xcode)
 3. Start Xcode

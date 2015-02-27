@@ -7,7 +7,6 @@
 
 var Repository = require('./lib/repository');
 var Command    = require('./lib/command');
-var pty        = require('pty.js');
 
 /**
  * Setup function for getting access to a GIT repo
@@ -80,31 +79,13 @@ Gitty.getConfigSync = function(key) {
 Gitty.clone = function(path, url) {
   var self  = this;
   var args  = Array.prototype.slice.apply(arguments);
-  var creds = args[2].username ? args[2] : {};
   var done  = args.slice(-1).pop() || new Function();
-  var pterm = pty.spawn('git', ['clone', url, path], { cwd : path });
-  var error = null;
+  var command = ['clone', url, path].join(' ');
+  var cmd  = new Command('/', command);
 
-  pterm.on('data', function(data) {
-    var prompt = data.toLowerCase();
-
-    if (prompt.indexOf('username') > -1) {
-      return pterm.write(creds.username + '\r');
-    }
-
-    if (prompt.indexOf('password') > -1) {
-      return pterm.write(creds.password + '\r');
-    }
-
-    if ((prompt.indexOf('error') > -1) || (prompt.indexOf('fatal') > -1)) {
-      return error = prompt;
-    }
-  });
-
-  pterm.on('exit', function() {
-    done(error);
-  });
-};
+  cmd.exec(function(err, stdout, stderr) {
+    done(err, {stdout: stdout, stderr: stderr});
+  });};
 
 /**
  * Export Contructor
