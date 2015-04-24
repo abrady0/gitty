@@ -563,6 +563,7 @@ describe('Repository', function() {
 
     it('should apply changes from another commit', function(done) {
       repo2.checkoutSync('test');
+      process.chdir(repo2.path);
       fs.writeFileSync('cherry.txt', 'cherrypickme');
       repo2.addSync(['cherry.txt']);
       repo2.commitSync('cherrypickme');
