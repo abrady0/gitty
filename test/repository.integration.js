@@ -77,6 +77,7 @@ describe('Repository', function() {
 
     it('should show a new file in status', function(done) {
       fs.writeFile(repo1.path + '/file.txt', 'i am a file', function(err) {
+        should.not.exist(err);
         repo1.status(function(err, status) {
           should.not.exists(err);
           (status.untracked[0].file === 'file.txt').should.be.true;
@@ -180,10 +181,13 @@ describe('Repository', function() {
 
     it('should unstage a file from commit', function(done) {
       fs.writeFile(repo1.path + '/file.txt', 'modified file', function(err) {
+        should.not.exist(err);
         repo1.add(['file.txt'], function(err) {
+          should.not.exist(err);
           repo1.unstage(['file.txt'], function(err) {
             should.not.exist(err);
             repo1.status(function(err, status) {
+              should.not.exist(err);
               status.unstaged.should.have.lengthOf(1);
               done();
             });
@@ -211,9 +215,11 @@ describe('Repository', function() {
     it('should remove an added file', function(done) {
       fs.writeFile(repo1.path + '/file1.txt', 'i am a file', function(err) {
         repo1.add(['file1.txt'], function(err) {
+          should.not.exist(err);
           repo1.remove(['file1.txt'], function(err) {
             should.not.exist(err);
             repo1.status(function(err, status) {
+              should.not.exist(err);
               status.untracked.should.have.lengthOf(1);
               done();
             });
@@ -242,6 +248,7 @@ describe('Repository', function() {
       repo1.createBranch('test', function(err) {
         should.not.exist(err);
         repo1.getBranches(function(err, branches) {
+          should.not.exist(err);
           branches.current.should.equal('master');
           branches.others.should.have.lengthOf(1);
           done();
@@ -316,11 +323,15 @@ describe('Repository', function() {
 
     it('should merge a branch into the current branch', function(done) {
       repo1.add(['file1.txt'], function(err) {
+        should.not.exist(err);
         repo1.commit('add file', [], function(err) {
+          should.not.exist(err);
           repo1.checkout('master', function(err) {
+            should.not.exist(err);
             repo1.merge('test', function(err) {
               should.not.exist(err);
               repo1.log(function(err, log) {
+                should.not.exist(err);
                 log.should.have.lengthOf(2);
                 done();
               })
@@ -351,6 +362,7 @@ describe('Repository', function() {
       repo1.createTag('test', function(err) {
         should.not.exist(err);
         repo1.getTags(function(err, tags) {
+          should.not.exist(err);
           tags.should.have.lengthOf(1);
           done();
         });
@@ -396,6 +408,7 @@ describe('Repository', function() {
       repo1.addRemote('someremote', 'https://someremote', function(err) {
         should.not.exist(err);
         repo1.getRemotes(function(err, remotes) {
+          should.not.exist(err);
           should.exist(remotes.someremote);
           done();
         });
@@ -439,7 +452,9 @@ describe('Repository', function() {
 
     it('should change the remote url', function(done) {
       repo1.setRemoteUrl('someremote', 'https://anotherremote', function(err) {
+        should.not.exist(err);
         repo1.getRemotes(function(err, remotes) {
+          should.not.exist(err);
           remotes.someremote.should.equal('https://anotherremote');
           done();
         });
@@ -486,9 +501,11 @@ describe('Repository', function() {
 
     it('should reset history to a past commit', function(done) {
       repo1.log(function(err, log) {
+        should.not.exist(err);
         repo1.reset(log[1].commit, function(err) {
           should.not.exist(err);
           repo1.log(function(err, log) {
+            should.not.exist(err);
             log.should.have.lengthOf(1);
             done();
           });
@@ -514,6 +531,7 @@ describe('Repository', function() {
       repo1.describe(function(err, hash) {
         should.not.exist(err);
         repo1.log(function(err, log) {
+          should.not.exist(err);
           log[0].commit.substr(0, 7).should.equal(hash.substr(0, 7));
           done();
         })
@@ -537,11 +555,16 @@ describe('Repository', function() {
 
     it('should apply changes from another commit', function(done) {
       repo1.checkout('test', function(err) {
-        fs.writeFile('cherry.txt', 'cherrypickme', function(err) {
+        should.not.exist(err);
+        fs.writeFile(repo1.path + '/cherry.txt', 'cherrypickme', function(err) {
+          should.not.exist(err);
           repo1.add(['cherry.txt'], function(err) {
+            should.not.exist(err);
             repo1.commit('cherrypickme', [], function(err) {
+              should.not.exist(err);
               repo1.log(function(err, log) {
                 repo1.checkout('master', function(err) {
+                  should.not.exist(err);
                   repo1.cherryPick(log[0].commit, function(err) {
                     should.not.exist(err);
                     repo1.log(function(err, log) {
@@ -564,7 +587,7 @@ describe('Repository', function() {
     it('should apply changes from another commit', function(done) {
       repo2.checkoutSync('test');
       process.chdir(repo2.path);
-      fs.writeFileSync('cherry.txt', 'cherrypickme');
+      fs.writeFileSync(repo2.path + '/cherry.txt', 'cherrypickme');
       repo2.addSync(['cherry.txt']);
       repo2.commitSync('cherrypickme');
       var log = repo2.logSync();
@@ -612,6 +635,7 @@ describe('Repository', function() {
           repo1.commit('initial commit', [], function(err) {
             should.not.exist(err);
             fs.writeFile(repo1.path + '/commitflagfile.txt', 'bar', function(err) {
+              should.not.exist(err);
               repo1.commit('second commit', ['-a'], function(err) {
                 should.not.exist(err);
                 repo1.status(function(err, status) {
